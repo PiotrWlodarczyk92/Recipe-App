@@ -10,6 +10,7 @@ function Login({ setLoginModal, setCreateModal, setSession }) {
         email:'',
         password:''
       })
+    const [loginError, setLoginError] = useState(false)
     
       function handleChange(e) {
         setFormData((prevFormData) => {
@@ -23,15 +24,18 @@ function Login({ setLoginModal, setCreateModal, setSession }) {
       async function handleSubmit(e) {
         e.preventDefault()
 
-        const {} = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
             email: formData.email,
             password: formData.password,
           })
-
-          setLoginModal(false)
-          setSession(true)
-          navigate('/')
-        }
+          if (error) {
+            setLoginError(true)
+          } else {
+            setLoginModal(false)
+            setSession(true)
+            navigate('/')
+          }
+          }
 
 
     return (
@@ -42,6 +46,9 @@ function Login({ setLoginModal, setCreateModal, setSession }) {
             <input type="email" id="email" name="email" placeholder="Enter your email" className="" onChange={handleChange}/>
             <label className="self-start font-bold">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" className="" onChange={handleChange}/>
+            {loginError
+            ? <span className="font-bold text-red-700">Invalid user data.</span>
+            : null}
             <button type="submit" className="bg-slate-500 p-4 rounded-lg text-black font-bold cursor-pointer" >Login</button>
             <p>Don't have an account? Create one <button className="font-bold underline" onClick={() => {setCreateModal(true); setLoginModal(false)}}>here</button>.</p>
         </form>

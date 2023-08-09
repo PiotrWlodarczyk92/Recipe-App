@@ -15,8 +15,6 @@ const RecipeFull = () => {
     recipe_image: ""
   })
 
-  const [recipeImage, setRecipeImage] = useState("")
-
   useEffect(() => {
     async function fetchData() {
       const { data, error }  = await supabase
@@ -36,17 +34,9 @@ const RecipeFull = () => {
   }
   , [])
 
-  useEffect(() => {
-    const { data } = supabase
-      .storage
-      .from('Images')
-      .getPublicUrl(recipe.created_by + '/' + recipe.recipe_image)
-
-      console.log(data)
-
-      setRecipeImage(data.publicUrl)
-  }, [recipe])
   
+
+      const baseImageUrl = "https://bwbtvynagbvchywkzvfp.supabase.co/storage/v1/object/public/Images/" + recipe.created_by + '/' + recipe.recipe_image
 
   const handleDelete = async () => {
 
@@ -57,11 +47,12 @@ const RecipeFull = () => {
       navigate('..')
   }
 
+
     return (
       <div className="h-screen w-full flex flex-col justify-center p-6">
         <div style={{"--tw-bg-opacity": 0.5}} className="flex flex-col items-center gap-5 px-2 py-4 m-2 mt-0 bg-slate-100 rounded-lg">
         <button className="self-end" onClick={() => {navigate('..')}}>X</button>
-          <img src={recipeImage} width="400" height="400" />
+          <img src={baseImageUrl} width="400" height="400" onError={(e) => e.target.src="/dish.svg"} />
           <h1 className="text-xl font-bold">{recipe.name}</h1>
           <div>
             <h3>Składniki:</h3>

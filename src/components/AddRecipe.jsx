@@ -9,6 +9,8 @@ function AddRecipe({ setAddModal, userId }) {
         prep:''
       })
 
+      const [addRecipeError, setAddRecipeError] = useState(false)
+
     const fileName = Date.now()
       function handleChange(e) {
         setFormData((prevFormData) => {
@@ -30,15 +32,23 @@ function AddRecipe({ setAddModal, userId }) {
 
 
       async function handleSubmit(e) {
+
         e.preventDefault()
+
+        if (!formData.name || !formData.ingredients || !formData.prep) {
+        setAddRecipeError(true)
     
-        const { } = await supabase
+        } else {
+
+         setAddRecipeError(false) 
+          const { } = await supabase
         .from('recipes')
         .insert({ created_by: userId, name:formData.name, ingredients:formData.ingredients, prep:formData.prep, recipe_image:fileName })
 
         setAddModal(false)
         window.location.reload()
         }
+      }
 
 
     return (
@@ -52,6 +62,9 @@ function AddRecipe({ setAddModal, userId }) {
             <label className="self-start font-bold">Prep</label>
             <textarea id="prep" name="prep" placeholder="" className="" onChange={handleChange}/>
             <input type="file" id='image' name='image' onChange={(e) => uploadImage(e)}></input>
+            {addRecipeError
+            ? <span className="font-bold text-red-700">Please fill all the informations.</span>
+            : null}
             <button type="submit" className="bg-slate-500 p-4 rounded-lg text-black font-bold cursor-pointer">Add recipe</button>
         </form>
     </div>

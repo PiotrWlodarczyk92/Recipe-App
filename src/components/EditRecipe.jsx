@@ -10,6 +10,7 @@ const EditRecipe = () => {
   const [name, setName] = useState("")
   const [ingredients, setIngredients] = useState("")
   const [prep, setPrep] = useState("")
+  const [editRecipeError, setEditRecipeError] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -29,6 +30,12 @@ const EditRecipe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!name || !ingredients || !prep) {
+      setEditRecipeError(true)
+  
+      } else {
+      setEditRecipeError(false)
   
     const { } = await supabase
       .from('recipes')
@@ -36,6 +43,7 @@ const EditRecipe = () => {
       .eq('id', id)
   
       navigate('..')
+      }
   
   }
 
@@ -50,6 +58,9 @@ const EditRecipe = () => {
           <label>Preparation:</label>
           <textarea rows={5} cols={50} name="prep" placeholder="Separate preparation steps by Enter" value={prep} onChange={(e) => setPrep(e.target.value)}/>
           {/*<input type="file"></input>*/}
+          {editRecipeError
+            ? <span className="font-bold text-red-700">Please fill all the informations.</span>
+            : null}
           <button className="rounded bg-green-400 px-6 pb-2 pt-2.5 text-l font-medium uppercase leading-normal text-neutral-800" type="submit">Save changes</button>
         </form>
     </div>

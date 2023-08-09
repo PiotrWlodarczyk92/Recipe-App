@@ -1,22 +1,11 @@
 import supabase from "../client"
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
-import { useEffect } from "react"
 
 const RecipeCard = ({ recipe }) => {
 
-  const [recipeImage, setRecipeImage] = useState("")
-
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const { data } = supabase
-      .storage
-      .from('Images')
-      .getPublicUrl(recipe.created_by + '/' + recipe.recipe_image)
-
-      setRecipeImage(data.publicUrl)
-  }, []) 
+  const baseImageUrl = "https://bwbtvynagbvchywkzvfp.supabase.co/storage/v1/object/public/Images/" + recipe.created_by + '/' + recipe.recipe_image
 
   const handleDelete = async () => {
 
@@ -30,7 +19,7 @@ const RecipeCard = ({ recipe }) => {
     return (
         <div className="relative flex flex-col col-1 justify-center rounded-lg p-2 bg-slate-100" >
           <div className="flex flex-col mb-3" onClick={() => navigate("/" + recipe.id)}>
-            <img src={recipeImage} className="self-center" width="100" height="100" />
+            <img src={baseImageUrl} className="self-center" width="100" height="100" onError={(e) => e.target.src="/dish.svg"}/>
             <h3 className="text-2xl font-bold" >{recipe.name}</h3>
           </div>
           <div className="flex justify-around">

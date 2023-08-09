@@ -8,6 +8,7 @@ function CreateAccount({ setLoginModal, setCreateModal, setSession }) {
         email:'',
         password:''
       })
+    const [createAccountError, setCreateAccountError] = useState(false)
     
       function handleChange(e) {
         setFormData((prevFormData) => {
@@ -21,7 +22,7 @@ function CreateAccount({ setLoginModal, setCreateModal, setSession }) {
       async function handleSubmit(e) {
         e.preventDefault()
     
-        const {} = await supabase.auth.signUp(
+        const { error } = await supabase.auth.signUp(
           {
             email: formData.email,
             password: formData.password,
@@ -32,14 +33,18 @@ function CreateAccount({ setLoginModal, setCreateModal, setSession }) {
             }
           }
         )
-        setCreateModal(false)
+        if (error) {
+          setCreateAccountError(true)
+        } else {
+          setSession(true)
+          setCreateModal(false)
 
-        const {} = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password,
-          })
-        setSession(true)
-        }
+          const {} = await supabase.auth.signInWithPassword({
+              email: formData.email,
+              password: formData.password,
+            })
+          }
+      }
 
 
     return (
@@ -52,6 +57,9 @@ function CreateAccount({ setLoginModal, setCreateModal, setSession }) {
             <input type="email" id="email" name="email" placeholder="Enter your email" className="" onChange={handleChange}/>
             <label className="self-start font-bold">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" className="" onChange={handleChange}/>
+            {createAccountError
+            ? <span className="font-bold text-red-700">User account on this email already exist.</span>
+            : null}
             <button type="submit" className="bg-slate-500 p-4 rounded-lg text-black font-bold cursor-pointer">Create Account</button>
             <p>Already have an account? You can login <button className="font-bold underline" onClick={() => {setLoginModal(true); setCreateModal(false)}}>here</button>.</p>
         </form>
